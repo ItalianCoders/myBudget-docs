@@ -215,6 +215,54 @@ definitions:
       - totalElements
       - totalPages
       - number
+      
+  ###############################################################################
+  # definition: Error models
+  
+  ValidationError:
+    description: Validation Error
+    type: object
+    properties:
+      code:
+        description: Validation Error code (Exception Name)
+        type: string
+      message:  
+        description: Validation Error Message
+        type: string
+
+  ErrorDetail:
+    description: Bad Request Error Detail
+    type: object
+    properties:
+      title:
+        description: Error Title
+        type: string
+      detail:
+        description: Error Detail
+        type: string
+      timeStamp:
+        description: unix time of the error instant
+        type: number
+        format: double
+      developerMessage:
+        description: error info for debug purpose
+        type: string
+      exception:
+        description: identifier of error raised
+        type: string
+      code:
+        description: error code
+        type: integer
+      subcode:
+        description: subcode to represent different scenario for the same error
+        type: integer
+      validationErrors:
+        type: object
+        description: a map of list of validation errors. The key is the field name and the value a list of validation errors on this field
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ValidationError'
 
   ###############################################################################
   # definition: User API      
@@ -234,6 +282,7 @@ definitions:
       - None
       - Facebook
       - Google
+      
 
 
   User:
@@ -331,6 +380,28 @@ definitions:
       - user
       - refreshToken
 
+  RegistrationUser:
+    type: object
+    properties:
+      username:
+        type: string
+        minLength: 4
+      password:
+        minLength: 5
+      email:
+        description: Email of the user
+        type: string        
+      firstname:
+        type: string
+      lastname:
+        type: string
+      gender:
+        $ref: '#/definitions/GenderEnum'           
+    required:
+      - username
+      - password
+      - email      
+
 ###############################################################################
 # API ENDPOINT
 ###############################################################################
@@ -362,3 +433,26 @@ paths:
               type: string
         '401':
           description: Login failed
+          
+  /public/v1/register:
+    post:
+      operationId: registerAccount
+      tags:
+        - Registration
+      description: |
+        Creates a new myBudget Account
+      parameters:
+        - name: user
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RegistrationUser'
+      responses:
+        '201':
+          description: User correcly created
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: Invalid data to create an User
+          schema:
+            $ref: '#/definitions/ErrorDetail'          
