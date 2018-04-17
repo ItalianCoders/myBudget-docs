@@ -16,7 +16,7 @@ Di seguito alcune info sulle entita’ in gioco; per maggiori info guardare lo y
 
 **Backend**: Un servizio che espone API Restful con autenticazione JWT. Un secondo servizio che espone API mqtt websocket
 
-[**webapp**](https://github.com/ItalianCoders/myBudget-web-frontend): Angular 5
+[**Webapp**](https://github.com/ItalianCoders/myBudget-web-frontend): Angular 5
 
 [**Mobile Android**](https://github.com/ItalianCoders/myBudget-mobile-android): Kotlin nativa
 
