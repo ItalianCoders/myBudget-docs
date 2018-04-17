@@ -6,7 +6,7 @@ MyBudget si presenta come il degno sostituto del vecchio quaderno che usavano le
 
 # Entita del dominio applicativo
 
-<img align="left" src="images//diagram.png" height=100px>
+<img align="left" src="images//diagram.png" height=200px>
 
 Di seguito alcune info sulle entita’ in gioco; per maggiori info guardare lo yaml .
 * **USERS**: Entita che rappresenta l utilizzatore del software. Un utente puo iscriversi a mybudget sia con una funzionalita’di registrazione account compilando i suoi dati che utilizzando l apposito login da google o fb.
