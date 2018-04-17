@@ -313,31 +313,78 @@ definitions:
       - username
       - password
       - alias
-
+      
   ###############################################################################
-  # definition: Login model to post on Login request
-  # NB: if it is a login using social facebook integration put userid as username and * as password
-  # NB: if it is a login using social google integration put email as username and * as password
+  # definition: Movement
+  MovementType:
+    description: Status of the account depending threshold on account balance
+    type: integer
+    enum:
+      - Incoming
+      - Expense
 
-  
-  JwtAuthenticationRequest:
+  Movement:
     type: object
     properties:
-      username:
-        description: Username choosen during the registration on myBudget service or the user id for FB user or email for Gmail User   
+      id:
+        description: unique id of the Movement   
         type: string
-      password:
-        description: Password choosen during the registration on myBudget service or  * for the social    
+        readOnly: true
+      type:
+        description: movement type ( incoming or expense)
+        $ref: '#/definitions/MovementType'
+      amount:
+        description: amount of the movement
+        type: number
+        format: double
+      executedBy:
+        description: User that have executed this movement
+        $ref: '#/definitions/User'
+      executedAt:
+        description: unix time of the movement execution
+        type: integer
+      uptadedAt:
+        description: unix time of the upd for debug purpose
+        type: integer
+        readOnly: true
+      note:
+        description: eventually note about the movement 
         type: string
-      socialAccessToken:
-        description: access token of the social session or null for standard login    
-        type: string
-      socialAuthenticationType:
-        $ref: '#/definitions/SocialTypeEnum'    
+      category:
+        description: category used to perform the movement
+        $ref: '#/definitions/Category'
     required:
-      - username
-      - password
-
+      - id
+      - type
+      - amount
+      
+  Category:
+    type: object
+    properties:
+      id:
+        description: unique id of the Category   
+        type: string
+        readOnly: true
+      value:
+        description: Category name 
+        type: string
+      type:
+        description: movement type creatable with a category
+        $ref: '#/definitions/MovementType'
+      iconId:
+        type: integer
+      isEditable:
+        type: boolean
+        readOnly: true        
+    required:
+      - id
+      - value
+      - type
+      - isEditable
+      
+  ###############################################################################
+  # definition: Account
+  
   AccountStatusEnum:
     description: Status of the account depending threshold on account balance
     type: integer
@@ -362,7 +409,52 @@ definitions:
         type: integer
     required:
       - id
-      - name      
+      - name
+
+  AccountDetails:
+    description: Detail view of Account
+    allOf:
+      - $ref: '#/definitions/Account'
+      - type: object    
+    properties:
+      incomingCategoriesAvalaible:
+        description: incoming categories usable for incoming movement
+        type: array
+        items:
+          $ref: '#/definitions/Category'
+      name:
+        description: Title of the account  
+        type: string
+      description:
+        type: string
+      numberOfUsers:
+        type: integer
+    required:
+      - id
+      - name        
+  ###############################################################################
+  # definition: Login model to post on Login request
+  # NB: if it is a login using social facebook integration put userid as username and * as password
+  # NB: if it is a login using social google integration put email as username and * as password
+
+  
+  JwtAuthenticationRequest:
+    type: object
+    properties:
+      username:
+        description: Username choosen during the registration on myBudget service or the user id for FB user or email for Gmail User   
+        type: string
+      password:
+        description: Password choosen during the registration on myBudget service or  * for the social    
+        type: string
+      socialAccessToken:
+        description: access token of the social session or null for standard login    
+        type: string
+      socialAuthenticationType:
+        $ref: '#/definitions/SocialTypeEnum'    
+    required:
+      - username
+      - password
       
   JwtAuthenticationResponse:
     type: object
@@ -455,4 +547,20 @@ paths:
         '400':
           description: Invalid data to create an User
           schema:
-            $ref: '#/definitions/ErrorDetail'          
+            $ref: '#/definitions/ErrorDetail'
+
+  /protected/v1/accounts:
+    get:
+      operationId: getAccounts
+      tags:
+        - Account
+      description: Returns Accounts available for the logged user
+      responses:
+        '200':
+          description: Arrays of Account object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Account'
+        '401':
+          description: Invalid session
