@@ -22,4 +22,4 @@ Di seguito alcune info sulle entita’ in gioco; per maggiori info guardare lo y
 
 [**Mobile Android**](https://github.com/ItalianCoders/myBudget-mobile-android): Kotlin nativa
 
-]**Mobile iOS**](https://github.com/ItalianCoders/myBudget-mobile-ios) : Swift
+[**Mobile iOS**](https://github.com/ItalianCoders/myBudget-mobile-ios) : Swift
