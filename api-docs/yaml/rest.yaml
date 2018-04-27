@@ -283,7 +283,12 @@ definitions:
       - Facebook
       - Google
       
-
+  UserRole:
+    description: Account Role of an user. The admin can delete an account or can kick a member
+    type: integer
+    enum:
+      - Standard
+      - Admin
 
   User:
     type: object
@@ -410,12 +415,23 @@ definitions:
     required:
       - id
       - name
-
+      
+  AccountCreationRequest:
+    description: Detail view of Account
+    allOf:
+      - $ref: '#/definitions/Account'
+      - type: object
+    properties:
+      initialBalance:
+        description:  initial balance to init the account
+        type: number
+        format: double
+        
   AccountDetails:
     description: Detail view of Account
     allOf:
       - $ref: '#/definitions/Account'
-      - type: object    
+      - type: object
     properties:
       incomingCategoriesAvalaible:
         description: incoming categories usable for incoming movement
@@ -602,8 +618,27 @@ paths:
             items:
               $ref: '#/definitions/Account'
         '401':
-          description: Invalid session
-          
+          description: User Not Authorized
+    post:
+      operationId: postAccount
+      tags:
+        - Account
+      description: Create an account
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AccountCreationRequest'
+      responses:
+        '201':
+          description: Account created correctly
+        '400':
+          description: Invalid account posted
+          schema:
+            $ref: '#/definitions/ErrorDetail'
+        '401':
+          description: User Not Authorized            
   /protected/v1/accounts/{accountId}:
     get:
       operationId: getAccountDetail
@@ -624,4 +659,148 @@ paths:
         '404':
           description: Account Not Found            
         '401':
-          description: Invalid session
+          description:  User Not Authorized
+    put:
+      operationId: updateAccount
+      tags:
+        - Account
+      description: update an existing account
+      parameters:
+        - name: accountId
+          in: path
+          type: string
+          required: true      
+        - name: account
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Account'
+      responses:
+        '201':
+          description: Account created correctly
+        '400':
+          description: Invalid account posted
+          schema:
+            $ref: '#/definitions/ErrorDetail'
+        '404':
+          description: Account Not Found            
+        '401':
+          description: User Not Authorized 
+    delete:
+      operationId: deleteAccount
+      tags:
+        - Account
+      description: delete an existing account. Only the admin of an account can delete it
+      parameters:
+        - name: accountId
+          in: path
+          type: string
+          required: true
+      responses:
+        '201':
+          description: Account deleted correctly
+        '404':
+          description: Account Not Found            
+        '401':
+          description: User Not Authorized
+          
+  /protected/v1/accounts/{accountId}/users/{username}/roles:
+    put:
+      operationId: updateUserRole
+      tags:
+        - Account
+      description: Update the role of an user. Only account administrators can peform this operation
+      parameters:
+        - name: accountId
+          in: path
+          type: string
+          required: true  
+        - name: username
+          in: path
+          type: string
+          required: true
+        - name: role
+          in: query
+          type: integer
+          description: enum value of UserRole
+          required: true
+      responses:
+        '201':
+          description: user role changed correctly
+        '400':
+          description: Operation Failed
+          schema:
+            $ref: '#/definitions/ErrorDetail'          
+        '404':
+          description: Account Not Found            
+        '401':
+          description:  User Not Authorized
+  /protected/v1/accounts/{accountId}/kick:
+    delete:
+      operationId: kickUser
+      tags:
+        - Account
+      description: Kick an user from the accountr. Only account administrators can peform this operation
+      parameters:
+        - name: accountId
+          in: path
+          type: string
+          required: true
+      responses:
+        '201':
+          description: user correctly kicked
+        '400':
+          description: Operation Failed
+          schema:
+            $ref: '#/definitions/ErrorDetail'          
+        '404':
+          description: Account Not Found            
+        '401':
+          description:  User Not Authorized
+  /protected/v1/accounts/{accountId}/left:
+    delete:
+      operationId: leftAccount
+      tags:
+        - Account
+      description: User left account operation
+      parameters:
+        - name: accountId
+          in: path
+          type: string
+          required: true
+      responses:
+        '201':
+          description: user correctly left the account
+        '404':
+          description: Account Not Found            
+        '401':
+          description:  User Not Authorized
+  /protected/v1/accounts/{accountId}/movements:
+    post:
+      operationId: postMovement
+      tags:
+        - Movement
+      description: |
+        Creates a new Movement for the selected Account
+      parameters:
+        - name: accountId
+          in: path
+          type: string
+          required: true      
+        - name: movement
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Movement'
+      responses:
+        '201':
+          description: Movement correcly created
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: movement Creation is failed
+          schema:
+            $ref: '#/definitions/ErrorDetail'
+        '401':
+          description:  User Not Authorized            
+      
