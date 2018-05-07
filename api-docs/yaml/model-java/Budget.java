@@ -26,7 +26,12 @@ public class Budget {
     @NotNull
     @JsonProperty("amount")
     private Double amount;
+
     @NotNull
+    @JsonProperty("amountSpent")
+    private Double amountSpent;
+
+
     @JsonProperty("account")
     private Account account;
 
@@ -34,7 +39,6 @@ public class Budget {
     @JsonProperty("description")
     private String description;
 
-    @NotNull
     @JsonProperty("category")
     private Category category;
 
@@ -51,7 +55,7 @@ public class Budget {
     @JsonProperty("isEnableAlertMail")
     private boolean isEnableAlertMail;
 
-    @JsonProperty("monthlyStatus")
+    @JsonProperty("currentStatus")
     private AccountStatusEnum currentStatus;
 
     public Budget(){}
