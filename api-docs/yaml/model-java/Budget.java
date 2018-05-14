@@ -49,15 +49,25 @@ public class Budget {
     @JsonProperty("alertThreshold")
     private Double alertThreshold;
 
-    @JsonProperty("isEnableAlertPushNotification")
-    private boolean isEnableAlertPushNotification;
+    @JsonProperty("isEnabledAlertPushNotification")
+    private boolean enabledAlertPushNotification;
 
-    @JsonProperty("isEnableAlertMail")
-    private boolean isEnableAlertMail;
+    @JsonProperty("isEnabledAlertMail")
+    private boolean enabledAlertMail;
 
     @JsonProperty("currentStatus")
     private AccountStatusEnum currentStatus;
 
-    public Budget(){}
+    @JsonProperty("createdAt")
+    private Long createdAt;
+
+    @JsonProperty("updatedAt")
+    private Long updatedAt;
+
+    @JsonProperty("createdBy")
+    private User createdBy;
+
+
+
 
 }
